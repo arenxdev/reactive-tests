@@ -1,7 +1,9 @@
 package com.dailycodebuffer.arenxdev.services;
 
 import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Hooks;
 import reactor.test.StepVerifier;
+import reactor.tools.agent.ReactorDebugAgent;
 
 import java.security.NoSuchAlgorithmException;
 
@@ -240,8 +242,11 @@ class FluxAndMonoServicesTest {
 
     @Test
     void fruitsFluxOnErrorMap() {
+//        Hooks.onOperatorDebug();
+        ReactorDebugAgent.init();
+        ReactorDebugAgent.processExistingClasses();
         StepVerifier.create(fluxAndMonoServices.fruitsFluxOnErrorMap().log())
-                .expectNext("Apple")
+                .expectNext("APPLE")
                 .expectError(IllegalStateException.class)
                 .verify();
     }

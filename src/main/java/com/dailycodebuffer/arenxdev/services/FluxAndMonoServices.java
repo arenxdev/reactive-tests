@@ -1,6 +1,7 @@
 package com.dailycodebuffer.arenxdev.services;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Hooks;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
@@ -215,11 +216,16 @@ public class FluxAndMonoServices {
 
     public Flux<String> fruitsFluxOnErrorMap() {
         return Flux.just("Apple", "Mango", "Orange")
+                .checkpoint("Error Checkpoint 1")
                 .map(s -> {
                     if (s.equals("Mango")) throw new RuntimeException("Error occurred");
-                    return s;
+                    return s.toUpperCase();
                 })
-                .onErrorMap(e -> new IllegalStateException("Error occurred"));
+                .checkpoint("Error Checkpoint 2")
+                .onErrorMap(e -> {
+                    System.out.println("throwable = " + e);
+                    return new IllegalStateException("Error occurred");
+                });
     }
 
     public Flux<String> fruitsFluxDoOnError() {
